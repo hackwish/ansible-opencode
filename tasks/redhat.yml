@@ -1,0 +1,33 @@
+---
+# tasks file for ansible-opencode on Fedora/CentOS/RHEL
+
+- name: Install Opencode system dependencies (Fedora/RHEL)
+  dnf:
+    name:
+      - curl
+      - gnupg2
+      - wget
+      - git
+      - nodejs
+      - npm
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags: ['opencode', 'dependencies']
+
+- name: Install Opencode via NPM
+  shell: npm i -g opencode-ai
+  tags: ['opencode', 'install']
+
+- name: Create Opencode configuration directory
+  file:
+    path: "{{ vars.opencode.home_dir }}/.opencode"
+    state: directory
+    mode: '0755'
+  tags: ['opencode', 'config']
+
+- name: Verify Opencode installation
+  shell: opencode --version
+  register: opencode_check
+  failed_when: false
+  changed_when: false
+  tags: ['opencode', 'verify']

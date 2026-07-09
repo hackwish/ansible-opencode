@@ -1,0 +1,14 @@
+---
+# tasks file for ansible-opencode
+
+- name: Determine OS family
+  include_vars: vars/os_family.yml
+  when: ansible_os_family is defined
+
+- name: Include platform-specific variables
+  include_vars: "vars/{{ ansible_os_family | lower }}.yml"
+  when: ansible_os_family is defined
+
+- name: Import platform-specific tasks
+  include_tasks: "{{ ansible_os_family | lower }}.yml"
+  when: ansible_os_family is defined

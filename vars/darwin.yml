@@ -1,0 +1,7 @@
+darwin: "darwin"
+
+opencode:
+  name: opencode
+  bin_path: /usr/local/bin
+  home_dir: ~
+

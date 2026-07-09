@@ -1,0 +1,46 @@
+---
+# tasks file for ansible-opencode on Ubuntu/Debian (including Linux Mint)
+
+- name: Install Opencode system dependencies (Debian/Ubuntu)
+  apt:
+    name:
+      - curl
+      - gnupg
+      - software-properties-common
+      - wget
+      - git
+    state: present
+  tags: ['opencode', 'dependencies']
+
+- name: Add Node.js repository (Ubuntu/Debian)
+  shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  args:
+    executable: /bin/bash
+  when: ansible_os_family == "Debian" or ansible_distribution == "Linux Mint"
+  tags: ['opencode', 'nodejs']
+
+- name: Install Node.js (Ubuntu/Debian)
+  apt:
+    name:
+      - nodejs
+    state: present
+  when: ansible_os_family == "Debian" or ansible_distribution == "Linux Mint"
+  tags: ['opencode', 'nodejs']
+
+- name: Install Opencode via NPM
+  shell: npm i -g opencode-ai
+  tags: ['opencode', 'install']
+
+- name: Create Opencode configuration directory
+  file:
+    path: "{{ vars.opencode.home_dir }}/.opencode"
+    state: directory
+    mode: '0755'
+  tags: ['opencode', 'config']
+
+- name: Verify Opencode installation
+  shell: opencode --version
+  register: opencode_check
+  failed_when: false
+  changed_when: false
+  tags: ['opencode', 'verify']
