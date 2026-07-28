@@ -33,3 +33,10 @@
   failed_when: false
   changed_when: false
   tags: ['opencode', 'verify']
+
+- name: Install OpenCode Desktop via Homebrew Cask
+  homebrew_cask:
+    name: opencode-desktop
+    state: present
+  when: opencode_desktop_install | bool
+  tags: ['opencode', 'desktop']

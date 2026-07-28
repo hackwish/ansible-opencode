@@ -37,6 +37,8 @@ This role installs Opencode on the following platforms:
 | `admin_user` | `your_admin_user` | Administrator user for the system |
 | `installation_method` | `package` | Installation method to use |
 | `autoupdate` | `false` | Enable/disable automatic updates |
+| `opencode_desktop_install` | `false` | Install OpenCode Desktop application |
+| `opencode_desktop_version` | `stable` | Version channel for Desktop (stable/beta) |
 
 ### vars/linux.yml
 
@@ -45,6 +47,18 @@ This role installs Opencode on the following platforms:
 | `opencode.name` | `opencode` | Package name |
 | `opencode.bin_path` | `/usr/local/bin` | Binary installation path |
 | `opencode.home_dir` | `/root` | Home directory for Opencode |
+| `opencode.desktop.deb_url` | (see vars) | Download URL for .deb package |
+| `opencode.desktop.rpm_url` | (see vars) | Download URL for .rpm package |
+
+### Installing OpenCode Desktop
+
+```yaml
+- hosts: all
+  vars:
+    opencode_desktop_install: true
+  roles:
+    - ansible-opencode
+```
 
 ## Usage
 
@@ -52,6 +66,35 @@ This role installs Opencode on the following platforms:
 
 ```yaml
 - hosts: all
+  roles:
+    - ansible-opencode
+```
+
+### Installing OpenCode Desktop
+
+**Linux (Debian/Ubuntu):**
+```yaml
+- hosts: linux_servers
+  vars:
+    opencode_desktop_install: true
+  roles:
+    - ansible-opencode
+```
+
+**Linux (Fedora/RHEL):**
+```yaml
+- hosts: rhel_servers
+  vars:
+    opencode_desktop_install: true
+  roles:
+    - ansible-opencode
+```
+
+**macOS:**
+```yaml
+- hosts: macbook
+  vars:
+    opencode_desktop_install: true
   roles:
     - ansible-opencode
 ```

@@ -3,3 +3,6 @@ opencode:
   name: opencode-ai
   bin_path: /usr/local/bin
   home_dir: /root
+  desktop:
+    deb_url: "https://opencode.ai/download/stable/linux-x64-deb"
+    rpm_url: "https://opencode.ai/download/stable/linux-x64-rpm"

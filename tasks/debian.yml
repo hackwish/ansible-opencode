@@ -44,3 +44,25 @@
   failed_when: false
   changed_when: false
   tags: ['opencode', 'verify']
+
+- name: Download OpenCode Desktop (.deb)
+  get_url:
+    url: "{{ opencode.desktop.deb_url }}"
+    dest: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.deb"
+    mode: '0644'
+  when: opencode_desktop_install | bool
+  tags: ['opencode', 'desktop']
+
+- name: Install OpenCode Desktop (.deb)
+  apt:
+    deb: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.deb"
+    state: present
+  when: opencode_desktop_install | bool
+  tags: ['opencode', 'desktop']
+
+- name: Clean up downloaded .deb file
+  file:
+    path: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.deb"
+    state: absent
+  when: opencode_desktop_install | bool
+  tags: ['opencode', 'desktop']

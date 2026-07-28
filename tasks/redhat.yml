@@ -31,3 +31,25 @@
   failed_when: false
   changed_when: false
   tags: ['opencode', 'verify']
+
+- name: Download OpenCode Desktop (.rpm)
+  get_url:
+    url: "{{ opencode.desktop.rpm_url }}"
+    dest: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.rpm"
+    mode: '0644'
+  when: opencode_desktop_install | bool
+  tags: ['opencode', 'desktop']
+
+- name: Install OpenCode Desktop (.rpm)
+  dnf:
+    name: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.rpm"
+    state: present
+  when: opencode_desktop_install | bool
+  tags: ['opencode', 'desktop']
+
+- name: Clean up downloaded .rpm file
+  file:
+    path: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.rpm"
+    state: absent
+  when: opencode_desktop_install | bool
+  tags: ['opencode', 'desktop']
