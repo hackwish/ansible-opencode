@@ -1,7 +1,7 @@
 ---
 # test.yml
 
-- name: Test Antigravity installation
+- name: Test OpenCode installation
   hosts: all
   gather_facts: true
   roles:
