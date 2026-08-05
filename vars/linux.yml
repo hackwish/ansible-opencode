@@ -1,7 +1,8 @@
-1: # vars file for ansible-opencode
-2: # These can be overridden by platform-specific files
-3:
-4: opencode:
-5:   name: opencode-ai
-6:   bin_path: /usr/local/bin
-7:   home_dir: /root
+---
+# vars file for ansible-opencode
+# These can be overridden by platform-specific files
+
+opencode:
+  name: opencode-ai
+  bin_path: /usr/local/bin
+  home_dir: /root

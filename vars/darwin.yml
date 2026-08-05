@@ -1,9 +1,9 @@
+---
 darwin: "darwin"
 
 opencode:
-  name: opencode
+  name: opencode-ai
   bin_path: /usr/local/bin
   home_dir: ~
   desktop:
     app_name: "opencode-desktop"
-
