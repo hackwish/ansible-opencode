@@ -9,18 +9,29 @@
   check_mode: false
   tags: ['opencode', 'brew']
 
-- name: Uninstall any existing Opencode formula
-  community.general.homebrew:
-    name: opencode
-    state: absent
+- name: Check if Opencode is installed via Homebrew
+  ansible.builtin.command: brew list --formula opencode
+  register: brew_formula_check
+  changed_when: false
+  failed_when: false
+  check_mode: false
   when: brew_check.rc == 0
+  tags: ['opencode', 'brew']
+
+- name: Uninstall existing Opencode formula
+  ansible.builtin.command: brew uninstall --force opencode
+  register: brew_uninstall_result
+  when:
+    - brew_check.rc == 0
+    - brew_formula_check.rc == 0
+  changed_when: brew_uninstall_result.rc == 0
   tags: ['opencode', 'install']
 
 - name: Install Opencode via Homebrew
-  community.general.homebrew:
-    name: "{{ opencode.brew_formula }}"
-    state: latest
+  ansible.builtin.command: brew install {{ opencode.brew_formula }}
+  register: brew_install_result
   when: brew_check.rc == 0
+  changed_when: brew_install_result.rc == 0
   tags: ['opencode', 'install']
 
 - name: Install Opencode via npm (fallback when Homebrew is unavailable)

@@ -4,7 +4,7 @@ darwin: "darwin"
 opencode:
   name: opencode-ai
   bin_path: /usr/local/bin
-  home_dir: ~
+  home_dir: "{{ ansible_env.HOME }}"
   brew_formula: anomalyco/tap/opencode
   desktop:
     app_name: "opencode-desktop"
