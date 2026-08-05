@@ -9,9 +9,16 @@
   check_mode: false
   tags: ['opencode', 'brew']
 
-- name: Install Opencode via Homebrew
+- name: Uninstall any existing Opencode formula
   community.general.homebrew:
     name: opencode
+    state: absent
+  when: brew_check.rc == 0
+  tags: ['opencode', 'install']
+
+- name: Install Opencode via Homebrew
+  community.general.homebrew:
+    name: "{{ opencode.brew_formula }}"
     state: latest
   when: brew_check.rc == 0
   tags: ['opencode', 'install']
