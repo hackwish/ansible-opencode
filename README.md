@@ -28,6 +28,14 @@ This role installs Opencode on the following platforms:
 - Root/sudo privileges on target systems
 - Network connectivity for package repositories
 
+### Ansible Collections
+
+The `community.general` collection is required for the macOS tasks (Homebrew
+and Homebrew Cask modules). Install it with:
+
+```bash
+ansible-galaxy collection install community.general
+
 ## Role Variables
 
 ### defaults/main.yml
