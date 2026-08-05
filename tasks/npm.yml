@@ -1,0 +1,31 @@
+---
+# Install Opencode via npm, removing any stale previous installation first.
+# Prevents "npm error EEXIST: File exists" when a leftover binary/symlink
+# or the old package is already present in the npm global prefix.
+
+- name: Resolve npm global prefix
+  ansible.builtin.command: npm prefix -g
+  register: npm_global_prefix
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
+- name: Remove stale Opencode binary from npm global bin
+  ansible.builtin.file:
+    path: "{{ npm_global_prefix.stdout }}/bin/opencode"
+    state: absent
+  when:
+    - npm_global_prefix.rc == 0
+    - npm_global_prefix.stdout | length > 0
+
+- name: Uninstall previous Opencode npm package
+  ansible.builtin.command: npm uninstall -g {{ opencode_npm_package }}
+  register: npm_uninstall_result
+  changed_when: false
+  failed_when: false
+
+- name: Install Opencode via npm
+  ansible.builtin.command: npm install -g {{ opencode_npm_package }}
+  register: npm_install_result
+  changed_when: npm_install_result.stdout is search('added|changed|removed')
+  failed_when: npm_install_result.rc != 0

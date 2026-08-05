@@ -39,6 +39,7 @@ This role installs Opencode on the following platforms:
 | `autoupdate` | `false` | Enable/disable automatic updates |
 | `opencode_desktop_install` | `false` | Install OpenCode Desktop application |
 | `opencode_desktop_version` | `stable` | Version channel for Desktop (stable/beta) |
+| `opencode_npm_package` | `opencode-ai` | npm package name used by the npm install task |
 
 ### vars/linux.yml
 

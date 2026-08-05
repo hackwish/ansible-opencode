@@ -2,7 +2,7 @@
 # tasks file for ansible-opencode on Ubuntu/Debian (including Linux Mint)
 
 - name: Install Opencode system dependencies (Debian/Ubuntu)
-  apt:
+  ansible.builtin.apt:
     name:
       - curl
       - gnupg
@@ -12,41 +12,49 @@
     state: present
   tags: ['opencode', 'dependencies']
 
-- name: Add Node.js repository (Ubuntu/Debian)
-  shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-  args:
-    executable: /bin/bash
+- name: Download Node.js repository setup script
+  ansible.builtin.get_url:
+    url: https://deb.nodesource.com/setup_20.x
+    dest: /tmp/nodejs-setup.sh
+    mode: '0700'
+  when: ansible_os_family == "Debian" or ansible_distribution == "Linux Mint"
+  tags: ['opencode', 'nodejs']
+
+- name: Run Node.js repository setup script
+  ansible.builtin.command: bash /tmp/nodejs-setup.sh
+  register: nodejs_setup_result
+  changed_when: false
   when: ansible_os_family == "Debian" or ansible_distribution == "Linux Mint"
   tags: ['opencode', 'nodejs']
 
 - name: Install Node.js (Ubuntu/Debian)
-  apt:
+  ansible.builtin.apt:
     name:
       - nodejs
     state: present
   when: ansible_os_family == "Debian" or ansible_distribution == "Linux Mint"
   tags: ['opencode', 'nodejs']
 
-- name: Install Opencode via NPM
-  shell: npm i -g opencode-ai
+- name: Install Opencode via npm
+  ansible.builtin.include_tasks: npm.yml
   tags: ['opencode', 'install']
 
 - name: Create Opencode configuration directory
-  file:
-    path: "{{ vars.opencode.home_dir }}/.opencode"
+  ansible.builtin.file:
+    path: "{{ opencode.home_dir }}/.opencode"
     state: directory
     mode: '0755'
   tags: ['opencode', 'config']
 
 - name: Verify Opencode installation
-  shell: opencode --version
+  ansible.builtin.command: opencode --version
   register: opencode_check
   failed_when: false
   changed_when: false
   tags: ['opencode', 'verify']
 
 - name: Download OpenCode Desktop (.deb)
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ opencode.desktop.deb_url }}"
     dest: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.deb"
     mode: '0644'
@@ -54,14 +62,14 @@
   tags: ['opencode', 'desktop']
 
 - name: Install OpenCode Desktop (.deb)
-  apt:
+  ansible.builtin.apt:
     deb: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.deb"
     state: present
   when: opencode_desktop_install | bool
   tags: ['opencode', 'desktop']
 
 - name: Clean up downloaded .deb file
-  file:
+  ansible.builtin.file:
     path: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.deb"
     state: absent
   when: opencode_desktop_install | bool

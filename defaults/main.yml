@@ -1,5 +1,7 @@
+---
 admin_user: your_admin_user
 installation_method: package
 autoupdate: false
 opencode_desktop_install: false
 opencode_desktop_version: "stable"
+opencode_npm_package: opencode-ai

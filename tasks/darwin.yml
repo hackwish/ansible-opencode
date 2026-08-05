@@ -1,41 +1,42 @@
 ---
 # tasks file for ansible-opencode on macOS
 
-- name: Install Homebrew
-  homebrew:
-    name: homebrew/core/openssl
-    state: present
+- name: Check for Homebrew
+  ansible.builtin.command: which brew
+  register: brew_check
+  changed_when: false
+  failed_when: false
+  check_mode: false
   tags: ['opencode', 'brew']
 
-- name: Install Opencode via Homebrew (or npm fallback)
-  block:
-    - name: Try Homebrew first
-      homebrew:
-        name: opencode
-        state: latest
-      when: homebrew is defined
+- name: Install Opencode via Homebrew
+  community.general.homebrew:
+    name: opencode
+    state: latest
+  when: brew_check.rc == 0
+  tags: ['opencode', 'install']
 
-    - name: Fallback to npm
-      shell: npm i -g opencode-ai
-      when: homebrew is undefined
+- name: Install Opencode via npm (fallback when Homebrew is unavailable)
+  ansible.builtin.include_tasks: npm.yml
+  when: brew_check.rc != 0
   tags: ['opencode', 'install']
 
 - name: Create Opencode configuration directory
-  file:
-    path: "{{ vars.opencode.home_dir }}/.opencode"
+  ansible.builtin.file:
+    path: "{{ opencode.home_dir }}/.opencode"
     state: directory
     mode: '0755'
   tags: ['opencode', 'config']
 
 - name: Verify Opencode installation
-  shell: opencode --version
+  ansible.builtin.command: opencode --version
   register: opencode_check
   failed_when: false
   changed_when: false
   tags: ['opencode', 'verify']
 
 - name: Install OpenCode Desktop via Homebrew Cask
-  homebrew_cask:
+  community.general.homebrew_cask:
     name: opencode-desktop
     state: present
   when: opencode_desktop_install | bool

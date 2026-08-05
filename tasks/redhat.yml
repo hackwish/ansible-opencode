@@ -2,7 +2,7 @@
 # tasks file for ansible-opencode on Fedora/CentOS/RHEL
 
 - name: Install Opencode system dependencies (Fedora/RHEL)
-  dnf:
+  ansible.builtin.dnf:
     name:
       - curl
       - gnupg2
@@ -14,26 +14,26 @@
   when: ansible_os_family == "RedHat"
   tags: ['opencode', 'dependencies']
 
-- name: Install Opencode via NPM
-  shell: npm i -g opencode-ai
+- name: Install Opencode via npm
+  ansible.builtin.include_tasks: npm.yml
   tags: ['opencode', 'install']
 
 - name: Create Opencode configuration directory
-  file:
-    path: "{{ vars.opencode.home_dir }}/.opencode"
+  ansible.builtin.file:
+    path: "{{ opencode.home_dir }}/.opencode"
     state: directory
     mode: '0755'
   tags: ['opencode', 'config']
 
 - name: Verify Opencode installation
-  shell: opencode --version
+  ansible.builtin.command: opencode --version
   register: opencode_check
   failed_when: false
   changed_when: false
   tags: ['opencode', 'verify']
 
 - name: Download OpenCode Desktop (.rpm)
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ opencode.desktop.rpm_url }}"
     dest: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.rpm"
     mode: '0644'
@@ -41,14 +41,14 @@
   tags: ['opencode', 'desktop']
 
 - name: Install OpenCode Desktop (.rpm)
-  dnf:
+  ansible.builtin.dnf:
     name: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.rpm"
     state: present
   when: opencode_desktop_install | bool
   tags: ['opencode', 'desktop']
 
 - name: Clean up downloaded .rpm file
-  file:
+  ansible.builtin.file:
     path: "/tmp/opencode-desktop_{{ opencode_desktop_version }}.rpm"
     state: absent
   when: opencode_desktop_install | bool
